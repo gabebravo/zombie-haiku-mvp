@@ -1,0 +1,17 @@
+{
+  "name": "zombiehaiku",
+  "version": "1.0.0",
+  "description": "TWD haiku app",
+  "main": "main.js",
+  "scripts": {
+    "start": "nodemon main.js"
+  },
+  "author": "Gabe Bravo - gabecbravo@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
+    "mongoose": "^4.8.2",
+    "morgan": "^1.8.1"
+  }
+}
