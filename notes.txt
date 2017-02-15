@@ -35,12 +35,19 @@ db.haikus.insert({
 	syllables: 2
 });
 
+ARTICLES
+db.haikus.insertMany( [
+	{"word": "The",type: "article",syllables: 1},
+	{"word": "A","type": "article","syllables": 1},
+	{"word": "One","type": "article","syllables": 1}
+] );
+
 NOUNS
 db.haikus.insertMany( [
 	{"word": "zombie",type: "noun",syllables: 2},
 	{"word": "hoard","type": "noun","syllables": 1},
 	{"word": "walker","type": "noun","syllables": 2},
-	{"word": "brains","type": "noun","syllables": 2},
+	{"word": "brains","type": "noun","syllables": 1},
 	{"word": "apocalypse","type": "noun","syllables": 4},
 	{"word": "flesh","type": "noun","syllables": 1},
 	{"word": "katana","type": "noun","syllables": 3},
@@ -125,6 +132,18 @@ db.haikus.insertMany( [
 	{"word": "Theodore","type": "character","syllables": 3},
 	{"word": "Beth","type": "character","syllables": 1}
 ] );
+
+UPDATE:
+db.haikus.find({"word":"brains" }) // find a word
+db.haikus.update( // change the syllabels
+   { "word": "brains" },
+   { $set:
+      {
+        "syllables": 1
+      }
+   }
+)
+
 
 
 

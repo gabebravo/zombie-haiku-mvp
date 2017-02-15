@@ -9,6 +9,7 @@ const bodyParser = require('body-parser')
 
 // import mongoose for the DB
 const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 
 // instantiate middleware instances
 const app = express();
@@ -32,7 +33,7 @@ app.use(bodyParser.json());
 
 // START THE SERVER
 // =============================================================================
-let server = function() {
+let server = function IIFE() {
 
   let server;
 

@@ -1,31 +1,41 @@
 
 $(document).ready( function() {
 
-  $('#submit').on('click', function(){
-    console.log('clicked');
-    printHaiku();
-  });
+  const BASE_URL = '/haiku';
+  const TEMPLATE = '/temp';
 
-  function printHaiku(){
+  (function IIFE() {
+
+    $('#submit').click(handler);
+
+    function handler(){
+      var randTemplate = Math.ceil(Math.random() * 1);
+      var template = TEMPLATE.concat(randTemplate);
+      request(template);
+    }
+
+    function request(templ) {
+      $.get(BASE_URL + templ, response);
+    }
+
+    function response(data){
+      printHaiku(data);
+    }
+
+  })();
+
+  function printHaiku(dataObj){
     let text = (`
-      The zomibe shamble<br>
-      Carol and bloody chopping<br>
-      Ravage moaning corpse
+      ${dataObj.art1} ${dataObj.noun1} ${dataObj.verb1}<br>
+      ${dataObj.name1} ${dataObj.adj1} ${dataObj.verb2}<br>
+      ${dataObj.verb3} ${dataObj.adj2} ${dataObj.noun2}
     `);
     $('.main').html(text);
   }
 
 });
 
-
 //HAIKU TEMPLATES:
-//outlines the formula for haiku format1
-// var format1 = new Object();
-//     format1.haikuLine1 = art.word + " " + noun1.word + " " + verb1.word + ",";
-//     format1.haikuLine2 = name1.word + " and " + adjective1.word + " " + verb2.word + ",";
-//     format1.haikuLine3 = verb3.word + " " + adjective2.word + " " + noun2.word + ".";
-//
-//
 // //outlines the formula for haiku format2
 // var format2 = new Object();
 //     format2.haikuLine1 = name1.word + " " + verb1.word + " " + adjective1.word + ",";
