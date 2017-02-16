@@ -1,39 +1,37 @@
+// because jquery is loaded in the body >>
+// $(document).ready() is not neccessary
 
-$(document).ready( function() {
+const BASE_URL = '/haiku';
+const TEMPLATE = '/temp';
 
-  const BASE_URL = '/haiku';
-  const TEMPLATE = '/temp';
+(function IIFE() {
 
-  (function IIFE() {
+  $('#submit').click(handler);
 
-    $('#submit').click(handler);
-
-    function handler(){
-      var randTemplate = Math.ceil(Math.random() * 1);
-      var template = TEMPLATE.concat(randTemplate);
-      request(template);
-    }
-
-    function request(templ) {
-      $.get(BASE_URL + templ, response);
-    }
-
-    function response(data){
-      printHaiku(data);
-    }
-
-  })();
-
-  function printHaiku(dataObj){
-    let text = (`
-      ${dataObj.art1} ${dataObj.noun1} ${dataObj.verb1}<br>
-      ${dataObj.name1} ${dataObj.adj1} ${dataObj.verb2}<br>
-      ${dataObj.verb3} ${dataObj.adj2} ${dataObj.noun2}
-    `);
-    $('.main').html(text);
+  function handler(){
+    let randTemplate = Math.ceil(Math.random() * 1);
+    let template = TEMPLATE.concat(randTemplate);
+    request(template);
   }
 
-});
+  function request(templ) {
+    $.get(BASE_URL + templ, response);
+  }
+
+  function response(data){
+    printHaiku(data);
+  }
+
+})();
+
+function printHaiku(dataObj){
+  let text = (`
+    ${dataObj.art1} ${dataObj.noun1} ${dataObj.verb1}<br>
+    ${dataObj.name1} ${dataObj.adj1} ${dataObj.verb2}<br>
+    ${dataObj.verb3} ${dataObj.adj2} ${dataObj.noun2}
+  `);
+  $('.main').html(text);
+}
 
 //HAIKU TEMPLATES:
 // //outlines the formula for haiku format2
