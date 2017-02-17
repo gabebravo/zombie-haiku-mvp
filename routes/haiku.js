@@ -6,90 +6,59 @@ const mongoose = require('mongoose');
 const haikuSchema = require('../schemas/haiku');
 const Haiku = mongoose.model('Haiku', haikuSchema);
 
-// route models
-function getWords(req, res) {
-  Haiku.find( (err, words) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-    if (!words) {
-      res.sendStatus(404);
-    }
-    res.status(200).json(words);
-  });
-}
-
 function getHaiku(req, res) {
   let zMap = {};
   let syllCount = 0;
 
   Haiku.find({ type: "article" }, {'_id': 0, 'word': 1, 'syllables': 1})
   .then(haikus => {
-    console.log(haikus);
     syllCount += mapAndReturnCount(haikus, zMap, "art1");
-    console.log(zMap);
-    console.log(syllCount);
-    return Haiku.find({ type: "noun" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').lte(3);
+    return Haiku.find({ type: "noun" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').gte(2).lte(3)
   })
   .then(haikus => {
-    console.log(haikus);
     syllCount += mapAndReturnCount(haikus, zMap, "noun1");
-    console.log(zMap);
-    console.log(syllCount);
-    return Haiku.find({ type: "verb" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').lte(5-syllCount);
+    return Haiku.find({ type: "verb" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').eq(5-syllCount);
   })
   .then(haikus => {
-    console.log(haikus);
-    mapAndReturnCount(haikus, zMap, "verb1");
-    console.log(zMap);
+    syllCount += mapAndReturnCount(haikus, zMap, "verb1");
     syllCount = 0;
-    console.log(syllCount);
     return Haiku.find({ type: "character" }, {'_id': 0, 'word': 1, 'syllables': 1})
   })
   .then(haikus => {
-    console.log(haikus);
     syllCount += mapAndReturnCount(haikus, zMap, "name1");
-    console.log(zMap);
-    console.log(syllCount);
-    return Haiku.find({ type: "adjective" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').lte(3);
+      if(syllCount == 1) {
+        syllCount += 1;
+        return Haiku.find({ type: "adjective" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').eq(2);
+      } else {
+        syllCount += 1;
+        return Haiku.find({ type: "adjective" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').eq(1);
+      }
   })
   .then(haikus => {
-    console.log(haikus);
     syllCount += mapAndReturnCount(haikus, zMap, "adj1");
-    console.log(zMap);
-    console.log(syllCount);
-    return Haiku.find({ type: "verb" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').lte(7-syllCount);
+    return Haiku.find({ type: "verb" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').eq(2);
   })
   .then(haikus => {
-    console.log(haikus);
-    mapAndReturnCount(haikus, zMap, "verb2");
-    console.log(zMap);
+    syllCount += mapAndReturnCount(haikus, zMap, "verb2");
     syllCount = 0;
-    console.log(syllCount);
     return Haiku.find({ type: "verb" }, {'_id': 0, 'word': 1, 'syllables': 1});
   })
   .then(haikus => {
-    console.log(haikus);
     syllCount += mapAndReturnCount(haikus, zMap, "verb3");
-    console.log(zMap);
-    console.log(syllCount);
-    if(syllCount == 3) {
+    if(syllCount == 2) {
+      syllCount += 1;
       return Haiku.find({ type: "adjective" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').eq(1);
     } else {
-      return Haiku.find({ type: "adjective" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').lte(2);
+      syllCount += 1;
+      return Haiku.find({ type: "adjective" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').eq(2);
     }
   })
   .then(haikus => {
-    console.log(haikus);
     syllCount += mapAndReturnCount(haikus, zMap, "adj2");
-    console.log(zMap);
-    console.log(syllCount);
-    return Haiku.find({ type: "noun" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').lte(5-syllCount);
+    return Haiku.find({ type: "noun" }, {'_id': 0, 'word': 1, 'syllables': 1}).where('syllables').eq(5-syllCount);
   })
   .then(haikus => {
-    console.log(haikus);
     mapAndReturnCount(haikus, zMap, "noun2");
-    console.log(zMap);
     res.status(200).json(zMap);
   })
   .catch(
@@ -100,26 +69,26 @@ function getHaiku(req, res) {
 
 function mapAndReturnCount(arr, obj, keyName) {
 
-  var randInx = Math.floor(Math.random() * arr.length);
-  var randWord = arr[randInx];
+  let randInx = Math.floor(Math.random() * arr.length);
+  let randObj = arr[randInx];
 
     if(Object.keys(obj).length === 0){
-     obj[keyName] = randWord.word;
-     return randWord.syllables;
+     obj[keyName] = randObj.word;
+     return randObj.syllables;
     }
-    if(!hasValue(randWord, obj)){
-      obj[keyName] = randWord.word;
-      return randWord.syllables;
+    if(!hasValue(randObj.word, obj)){
+      obj[keyName] = randObj.word;
+      return randObj.syllables;
     } else {
 
-      while(hasValue(randWord, obj)){
+      while(hasValue(randObj.word, obj)){
 
         randInx = Math.floor(Math.random() * arr.length);
-        randWord = arr[randInx];
+        randObj = arr[randInx];
 
-        if(!hasValue(randWord, obj)){
-          obj[keyName] = randWord.word;
-          return randWord.syllables;
+        if(!hasValue(randObj.word, obj)){
+          obj[keyName] = randObj.word;
+          return randObj.syllables;
         }
 
       }
@@ -127,9 +96,10 @@ function mapAndReturnCount(arr, obj, keyName) {
 }
 
 function hasValue(chkVal, obj){
-  var result = false;
+  let result = false;
   for (let val in obj) {
     if(obj[val] === chkVal){
+      console.log('true');
       result = true;
     }
   }
@@ -137,7 +107,6 @@ function hasValue(chkVal, obj){
 }
 
 // controllers
-router.get('/', getWords);
 router.get('/temp1', getHaiku);
 
 //export Haiku
